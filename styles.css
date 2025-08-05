@@ -1,0 +1,19 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: yellow;
+}
+
+#calculator-wrapper {
+  
+  width: 30vw;
+  height: 30vw;
+  margin: auto;
+  margin-top: 10vw;
+  background-color: red;
+}
+
+#calculator-screen {
+
+}

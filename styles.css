@@ -2,18 +2,32 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: yellow;
 }
 
 #calculator-wrapper {
   
-  width: 30vw;
-  height: 30vw;
+  width: 40vw;
+  height: 50vw;
   margin: auto;
   margin-top: 10vw;
   background-color: red;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* align-items: center; */
 }
 
 #calculator-screen {
+  width: 90%;
+  height: 50px;
+  margin: 15px;
+  background-color: white;
+}
 
+#calculator-button-wrapper {
+  background-color: black;
+  width: 90%;
+  height: 100%;
+  margin: 15px;
+  padding: 0;
 }

@@ -3,14 +3,25 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Calcin Time</title
+    <title>Calcin Time</title>
     <script src="script.js"></script>
     <link href="styles.css" rel="stylesheet">
   </head>
   <body>
-    <div id='calculator-wrapper'>
-      <div id='calculator-screen'></div>
-      <div id='calculator-button-wrapper'></div>
+    <div id='calculator'>
+      <div id="calculator-content">
+        <div id='screen'></div>
+        <div id='button-wrapper'>
+          <div id='numbers-wrapper'></div>
+          <div id='operators-wrapper'>
+            <button class="operator-button">÷</button>
+            <button class="operator-button">x</button>
+            <button class="operator-button">-</button>
+            <button class="operator-button">+</button>
+            <button class="operator-button">=</button>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>

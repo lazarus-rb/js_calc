@@ -2,32 +2,72 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: grey;
 }
 
-#calculator-wrapper {
+#calculator {
   
   width: 40vw;
   height: 50vw;
-  margin: auto;
-  margin-top: 10vw;
-  background-color: red;
+  background-color: #5C5C5C;
   display: flex;
-  flex-direction: column;
   justify-content: center;
-  /* align-items: center; */
+  align-items: center;
+  
 }
 
-#calculator-screen {
+#calculator-content {
+  background-color: #454545;
+  display: flex;
   width: 90%;
-  height: 50px;
-  margin: 15px;
+  height: 90%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+}
+
+
+#screen {
+  width: 90%;
+  height: 10%;
+  background-color: #C7C7C7;
+}
+
+#button-wrapper {
+  background-color: black;
+  width: 90%;
+  height: 70%;
+  margin-top: 10%;
+  display: flex;
+}
+
+#numbers-wrapper {
+  display: flex;
+  background-color: palevioletred;
+  height: 100%;
+  width: 50%;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+#operators-wrapper {
+  display: flex;
+  width:50%;
+  height: 100%;
+  background-color: aqua;
+}
+
+#numbers-button {
+  width: 20%;
+  height: 10%;
+  margin: 5px;
+}
+
+#numbers-button {
   background-color: white;
 }
 
-#calculator-button-wrapper {
-  background-color: black;
-  width: 90%;
-  height: 100%;
-  margin: 15px;
-  padding: 0;
+.operator-button {
+  background-color: white;
 }

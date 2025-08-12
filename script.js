@@ -1,9 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     const wrapper = document.getElementById('numbers-wrapper');
+    const screen = document.getElementById('screen');
 
     let clearScreen = false;
 
+
+    //Initialize numbers
     for (let i=10; i>=0; i--) {
         const button = document.createElement("button");
         if(i == 0) {
@@ -12,50 +15,69 @@ document.addEventListener('DOMContentLoaded', () => {
         else {
             button.textContent = i-1;
         }
-        button.id = 'numbers-button';
+        button.id = 'calc-button';
         wrapper.appendChild(button);
         button.addEventListener('click', function() {
             if(clearScreen == true) {
-                document.getElementById('screen').textContent = '0';
+                screen.textContent = '0';
                 clearScreen = false;
 
             }
             
-            const currentContent = document.getElementById('screen').textContent;
+            const currentContent = screen.textContent;
             if(currentContent == '0') {
-                document.getElementById('screen').textContent = button.textContent;
+                screen.textContent = button.textContent;
             }
             else {
-                document.getElementById('screen').textContent = currentContent + button.textContent;
+                screen.textContent = currentContent + button.textContent;
             }
         }); 
     }
 
-    const operatorButtons = document.querySelectorAll('.operator-button');
+
+    //Initialize operators
+    const operatorButtons = document.querySelectorAll('#operators-wrapper button');
+    let operators = [];
+    operatorButtons.forEach(button => {
+        operators.push(button.textContent);
+    })
 
     operatorButtons.forEach(button => {
-        if(button.textContent !== '=') {
-            button.addEventListener('click', function() {
-                const currentContent = document.getElementById('screen').textContent;
-                document.getElementById('screen').textContent = currentContent + button.textContent;
-                clearScreen = false;
+        button.id = 'calc-button';
+        button.addEventListener('click', function() {
+            const currentContent = screen.textContent;
 
-            })
-        }
-        else {
-            button.addEventListener('click', function() {
-                const currentContent = document.getElementById('screen').textContent;
-                document.getElementById('screen').textContent = calculate(currentContent);
+            if(button.textContent == '=') {
+                screen.textContent = calculate(currentContent);
                 clearScreen = true;
-            })
-        }
+            }
+
+            else if(button.textContent == 'AC') {
+                screen.textContent = '0';
+            }
+
+            else {
+                if(operators.includes(currentContent.charAt(currentContent.length - 1))) {   //Check if end char is number or operator
+                    screen.textContent = currentContent.slice(0, -1) + button.textContent;
+
+                }
+
+                else {
+                    screen.textContent = currentContent + button.textContent;
+
+                }
+
+                clearScreen = false;
+            }
+
+        })
     })
 
 
 
     function calculate(screenContent) {
         const inputContent = screenContent;
-        const regex = /(\d+)\s*(x|÷)\s*(\d+)/g;//serach for divide
+        const regex = /(\d+)\s*(x|÷)\s*(\d+)/g;//search for mult or divide
         let match;
         const equation = [];
 

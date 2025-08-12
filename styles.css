@@ -31,11 +31,11 @@ body {
 #screen {
   width: 90%;
   height: 10%;
+  font-size: 2em;
   background-color: #C7C7C7;
 }
 
 #button-wrapper {
-  background-color: black;
   width: 90%;
   height: 70%;
   margin-top: 10%;
@@ -44,7 +44,6 @@ body {
 
 #numbers-wrapper {
   display: flex;
-  background-color: palevioletred;
   height: 100%;
   width: 50%;
   flex-wrap: wrap;
@@ -53,21 +52,14 @@ body {
 
 #operators-wrapper {
   display: flex;
+  flex-wrap: wrap;
   width:50%;
   height: 100%;
-  background-color: aqua;
 }
 
-#numbers-button {
-  width: 20%;
-  height: 10%;
-  margin: 5px;
+#calc-button {
+  width: 25%;
+  height: 15%;
+  margin: 3px;
 }
 
-#numbers-button {
-  background-color: white;
-}
-
-.operator-button {
-  background-color: white;
-}

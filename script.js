@@ -39,8 +39,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const operatorButtons = document.querySelectorAll('#operators-wrapper button');
     let operators = [];
     operatorButtons.forEach(button => {
-        operators.push(button.textContent);
-    })
+        operators.push(button.textContent.toString());
+    });
+
+
+
+
 
     operatorButtons.forEach(button => {
         button.id = 'calc-button';
@@ -48,7 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentContent = screen.textContent;
 
             if(button.textContent == '=') {
-                screen.textContent = calculate(currentContent);
+                screen.textContent = calculate(currentContent.toString());
+                console.log('Equals button pressed content is ' + screen.textContent);
+                operators.length = 0;
                 clearScreen = true;
             }
 
@@ -77,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function calculate(screenContent) {
         const inputContent = screenContent;
-        const regex = /(\d+)\s*(x|÷)\s*(\d+)/g;//search for mult or divide
+        const regex = /(\d+(?:\.\d+)?)\s*(x|÷|\+|-)\s*(\d+(?:\.\d+)?)/g;//search for mult or divide, surrounding by numeric values
         let match;
         const equation = [];
 
@@ -95,6 +101,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 case('÷'):
                     result = numberBefore / numberAfter;
                     break;
+                case('+'):
+                    result = numberBefore + numberAfter;
+                    break;
+                case('-'):
+                    result = numberBefore - numberAfter;
+                    break;
             }
 
             equation.push({
@@ -104,14 +116,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let outputString = inputContent;
+        console.log('Fresh output string is: ' + outputString);
+
         equation.forEach(item => {
             outputString = outputString.replace(item.match, item.result.toString());
         });
 
-        console.log(outputString);
+        console.log('Working output string is: ' + outputString);
+
+        if(operators.includes(outputString.charAt(outputString.length - 1))) { //catch trailing operators
+            outputString = outputString.slice(0, -1);
+            console.log('Trailing operator detected, conformed operation is: ' + outputString); 
+        }
+
+        if(containsOperators(outputString, operators)) { //recalculate if there are any operators in the output string
+            console.log('There are still operators, so we need to recalculate');
+            let newCalc = outputString;
+            outputString = calculate(newCalc);
+        }
+        
+        
+        console.log('Final output string is: ' + outputString);
         return outputString;
+        
 
+    }
 
+    function containsOperators(str, chars) {
+        return chars.some(ch => str.includes(ch));
     }
 
 

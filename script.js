@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function calculate(screenContent) {
         const inputContent = screenContent;
-        const regex = /(\d+(?:\.\d+)?)\s*(x|÷|\+|-)\s*(\d+(?:\.\d+)?)/g;//search for mult or divide, surrounding by numeric values
+        const regex = /(\d+(?:\.\d+)?)\s*(x|÷)\s*(\d+(?:\.\d+)?)/g;//search for mult or divide, surrounding by numeric values
         let match;
         const equation = [];
 
@@ -115,24 +115,28 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        let outputString = inputContent;
-        console.log('Fresh output string is: ' + outputString);
+        let workingString = inputContent;
+        let outputString = '';
+        console.log('Fresh output string is: ' + workingString);
 
         equation.forEach(item => {
-            outputString = outputString.replace(item.match, item.result.toString());
+            workingString = workingString.replace(item.match, item.result.toString());
         });
 
-        console.log('Working output string is: ' + outputString);
+        console.log('Working output string is: ' + workingString);
 
-        if(operators.includes(outputString.charAt(outputString.length - 1))) { //catch trailing operators
-            outputString = outputString.slice(0, -1);
-            console.log('Trailing operator detected, conformed operation is: ' + outputString); 
+        if(operators.includes(workingString.charAt(workingString.length - 1))) { //catch trailing operators
+            workingString = workingString.slice(0, -1);
+            console.log('Trailing operator detected, conformed operation is: ' + workingString); 
         }
 
-        if(containsOperators(outputString, operators)) { //recalculate if there are any operators in the output string
+        if(containsOperators(workingString, operators)) { //recalculate if there are any operators in the output string
             console.log('There are still operators, so we need to recalculate');
-            let newCalc = outputString;
+            let newCalc = workingString;
             outputString = calculate(newCalc);
+        }
+        else {
+            outputString = workingString;
         }
         
         

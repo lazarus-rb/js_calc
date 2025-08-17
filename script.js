@@ -42,35 +42,47 @@ document.addEventListener('DOMContentLoaded', () => {
         operators.push(button.textContent.toString());
     });
 
-
-
-
-
     operatorButtons.forEach(button => {
         button.id = 'calc-button';
         button.addEventListener('click', function() {
             const currentContent = screen.textContent;
 
-            if(button.textContent == '=') {
+            if(button.textContent === '=') {
                 screen.textContent = calculate(currentContent.toString());
                 console.log('Equals button pressed content is ' + screen.textContent);
-                operators.length = 0;
                 clearScreen = true;
             }
 
-            else if(button.textContent == 'AC') {
+            else if(button.textContent === 'AC') {
                 screen.textContent = '0';
             }
 
-            else {
-                if(operators.includes(currentContent.charAt(currentContent.length - 1))) {   //Check if end char is number or operator
-                    screen.textContent = currentContent.slice(0, -1) + button.textContent;
+            else if(button.textContent === 'DEL') {
+                if(currentContent.length > 1)
+                    screen.textContent = currentContent.slice(0, -1);
+                else 
+                    screen.textContent = '0';
+            }
 
+            else {
+                if(operators.includes(currentContent.charAt(currentContent.length - 1))) { //Check if end char is number or operator
+                    if(button.textContent === '(') {
+                        screen.textContent = currentContent + button.textContent;
+                        
+                    }
+                    else {
+                        console.log(button.textContent);
+                        screen.textContent = currentContent.slice(0, -1) + button.textContent;
+                    }
                 }
 
-                else {
-                    screen.textContent = currentContent + button.textContent;
-
+                else { 
+                    if(button.textContent === '(') {
+                        screen.textContent = currentContent + 'x' + button.textContent;
+                    }
+                    else {
+                        screen.textContent = currentContent + button.textContent;
+                    }
                 }
 
                 clearScreen = false;
@@ -80,75 +92,123 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
 
+    const defineOperators = {
+        '+' : { precedence: 2, associativity: 'Left', fn: (a, b) => a + b},
+        '-' : { precedence: 2, associativity: 'Left', fn: (a, b) => a - b},
+        'x' : { precedence: 3, associativity: 'Left', fn: (a, b) => a * b},
+        '÷' : { precedence: 3, associativity: 'Left', fn: (a, b) => a / b},
+        '^' : { precedence: 4, associativity: 'Right', fn: (a, b) => Math.pow(a, b)},
+    };
 
-    function calculate(screenContent) {
-        const inputContent = screenContent;
-        const regex = /(\d+(?:\.\d+)?)\s*(x|÷)\s*(\d+(?:\.\d+)?)/g;//search for mult or divide, surrounding by numeric values
-        let match;
-        const equation = [];
+    function equationToTokens(screenContent) {
+        const regexToken = /\s*([()+\-x÷^]|[0-9]*\.?[0-9]+)\s*/g;
+        const tokens = [];
+        let regexMatch;
 
-        while ((match = regex.exec(inputContent)) !== null) {
-            const numberBefore = parseFloat(match[1]);
-            const operator = match[2];
-            const numberAfter = parseFloat(match[3]);
-
-            let result;
-
-            switch(operator) {
-                case('x'):
-                    result = numberBefore * numberAfter;
-                    break;
-                case('÷'):
-                    result = numberBefore / numberAfter;
-                    break;
-                case('+'):
-                    result = numberBefore + numberAfter;
-                    break;
-                case('-'):
-                    result = numberBefore - numberAfter;
-                    break;
-            }
-
-            equation.push({
-                match: match[0],
-                result: result
-            });
+        while((regexMatch = regexToken.exec(screenContent))) {
+            tokens.push(regexMatch[1]);
         }
 
-        let workingString = inputContent;
-        let outputString = '';
-        console.log('Fresh output string is: ' + workingString);
+        return tokens;
+    }
 
-        equation.forEach(item => {
-            workingString = workingString.replace(item.match, item.result.toString());
+    function infixToPostfix(equationTokens) {
+        const postFixEquation = [];
+        const operatorStack = [];
+
+        equationTokens.forEach(token => {
+            if(!isNaN(token)) {
+                postFixEquation.push(token);
+            }
+            else if (token in defineOperators) {
+
+                const operatorOne = defineOperators[token];
+
+                while(operatorStack.length) {
+
+                    const operatorTwo = defineOperators[operatorStack[operatorStack.length - 1]];
+
+                    if(!operatorTwo) { //no operator two, break while loop
+                        break;
+                    }
+
+                    const shouldPop = 
+                        (operatorOne.associativity === 'Left'   && operatorOne.precedence <= operatorTwo.precedence) ||
+                        (operatorOne.associativity === 'Right'  && operatorOne.precedence < operatorTwo.precedence);
+
+                    if(!shouldPop) {    //should pop false - break loop
+                        break;
+                    }
+
+                    postFixEquation.push(operatorStack.pop());
+                }
+
+                operatorStack.push(token);
+
+            } else if (token === '(') { //brackets not specified in operators, special conditions
+                operatorStack.push(token);
+            } else if (token === ')') {
+                while(operatorStack.length && operatorStack[operatorStack.length - 1] !== '(') {
+                    postFixEquation.push(operatorStack.pop());
+                }
+                if(operatorStack.length && operatorStack[operatorStack.length - 1] === '(') { //if there is a bracket, pop it
+                    operatorStack.pop();
+                }
+                else {
+                    return('Error');
+                }
+            } else {
+                return('Unknown token' + $[token]);
+            }  
         });
 
-        console.log('Working output string is: ' + workingString);
-
-        if(operators.includes(workingString.charAt(workingString.length - 1))) { //catch trailing operators
-            workingString = workingString.slice(0, -1);
-            console.log('Trailing operator detected, conformed operation is: ' + workingString); 
+        while(operatorStack.length) {
+            const operator = operatorStack.pop();
+            if(operator === '(' || operator === ')') 
+                return('Error');
+            postFixEquation.push(operator);
         }
 
-        if(containsOperators(workingString, operators)) { //recalculate if there are any operators in the output string
-            console.log('There are still operators, so we need to recalculate');
-            let newCalc = workingString;
-            outputString = calculate(newCalc);
+        return postFixEquation;
+    }
+
+    function solveRPN(postFixEquation) {
+        const stack = [];
+        for (const token of postFixEquation) {
+            if(!isNaN(token)) {
+                stack.push(Number(token));
+            } else {
+                const op = defineOperators[token];
+                if(!op) 
+                    throw new Error(`Unknown operator: ${token}`);
+                const b = stack.pop();
+                const a = stack.pop();
+                if(a === undefined || b === undefined)
+                    return('Syntax error');
+                stack.push(op.fn(a,b));
+            }
+        }
+        if(stack.length !== 1)
+            return('Syntax error');
+        return stack[0];
+    }
+    
+    
+
+    function calculate(screenContent) {
+        const equationTokens = equationToTokens(screenContent);
+        const postFixEquation = infixToPostfix(equationTokens);
+        if(postFixEquation !== 'Error') {
+            return solveRPN(postFixEquation);
+        
         }
         else {
-            outputString = workingString;
+            return 'Syntax error';
         }
         
-        
-        console.log('Final output string is: ' + outputString);
-        return outputString;
-        
 
     }
 
-    function containsOperators(str, chars) {
-        return chars.some(ch => str.includes(ch));
-    }
 
 
 
